@@ -34,7 +34,10 @@ def convert_to_feature(img_path):
     img_path: file path
     '''
     file_name = img_path.split('.')[-2].split('/')[-1]
-    img = img_path
+    img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.medianBlur(img, 5)
+    img = cv2.resize(img, (50, 50))
 
     return img, file_name
 

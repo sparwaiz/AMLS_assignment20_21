@@ -34,9 +34,36 @@ def convert_to_feature(img_path):
     img_path: file path
     '''
     file_name = img_path.split('.')[-2].split('/')[-1]
-    img = img_path
+    img = cv2.imread(img_path, cv2.IMREAD_COLOR)
 
-    return img, file_name
+    gray_scaled = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray_scaled = cv2.medianBlur(gray_scaled, 5)
+
+    circles = cv2.HoughCircles(
+            gray_scaled,
+            cv2.HOUGH_GRADIENT,
+            0.5,
+            img.shape[0],
+            param1=450,
+            param2=13,
+            minRadius=11,
+            maxRadius=12
+            )
+
+    if circles is not None:
+        eye_coords = circles[0][-1]
+
+        x_coord = int(eye_coords[0])
+        y_coord = int(eye_coords[1])
+        radius = int(eye_coords[2])
+
+        eye = img[y_coord:y_coord + radius, x_coord:x_coord + radius]
+        eye = cv2.cvtColor(eye, cv2.COLOR_BGR2HSV)
+        eye = cv2.resize(eye, (50, 50))
+
+        return eye, file_name
+
+    return None, file_name
 
 class Model:
     '''
@@ -89,14 +116,16 @@ class Model:
                                                   test_size=0.25,
                                                   random_state=0)
 
-        nsamples, nx, ny = tr_x.shape
-        training_images = tr_x.reshape((nsamples, nx*ny))
+        nsamples, nx, ny, nz = tr_x.shape
+        training_images = tr_x.reshape((nsamples, nx*ny*nz))
         training_labels = list(zip(*tr_y))[0]
 
 
-        nsamples, nx, ny = te_x.shape
-        self.testing_images = te_x.reshape((nsamples, nx*ny))
+        nsamples, nx, ny, nz = te_x.shape
+        self.testing_images = te_x.reshape((nsamples, nx*ny*nz))
         self.testing_labels = list(zip(*te_y))[0]
+
+        print(f'{len(tr_x) + len(te_x)}')
 
         return training_images, training_labels
 

@@ -169,23 +169,48 @@ class Model:
                                                   test_size=0.25,
                                                   random_state=0)
 
+        tr_x, vl_x, tr_y, vl_y = train_test_split(tr_x,
+                                          tr_y,
+                                          test_size=0.25,
+                                          random_state=0)
+
         training_images = tr_x.reshape((len(tr_x), len(tr_x[0]) * 2))
         training_labels = list(zip(*tr_y))[0]
+
+        validation_images = vl_x.reshape((len(vl_x), len(vl_x[0]) * 2))
+        validation_labels = list(zip(*vl_y))[0]
 
         self.testing_images = te_x.reshape((len(te_x), len(te_x[0]) * 2))
         self.testing_labels = list(zip(*te_y))[0]
 
-        return training_images, training_labels
+        return training_images, training_labels, validation_images, validation_labels
 
     def __train_model(self):
-        training_images, training_labels = self.__split_data()
+        if self.model is not None:
+            return None, None
+
+        training_images, training_labels, validation_images, validation_labels = self.__split_data()
 
         self.model = svm.SVC(kernel='poly', degree=3, C=1.0)
         self.model.fit(training_images, training_labels)
 
+        return validation_images, validation_labels
+
+    def validate(self):
+        '''
+        Validate Method to test model on validation data
+        '''
+        validation_images, validation_labels = self.__train_model()
+        pred = self.model.predict(validation_images)
+
+        print(
+            f'Accuracy of Model is {accuracy_score(validation_labels, pred)}'
+        )
+
+
     def predict(self):
         '''
-        Predict Methord to Be Called that starts predicting
+        Predict Method to Be Called that starts predicting
         '''
         self.__train_model()
         pred = self.model.predict(self.testing_images)
@@ -224,4 +249,5 @@ class Model:
 
 if __name__ == '__main__':
     model = Model('..', 'celeba')
+    model.validate()
     model.predict()

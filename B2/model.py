@@ -116,37 +116,69 @@ class Model:
                                                   test_size=0.25,
                                                   random_state=0)
 
+        tr_x, vl_x, tr_y, vl_y = train_test_split(tr_x,
+                                                  tr_y,
+                                                  test_size=0.25,
+                                                  random_state=0)
+
         nsamples, nx, ny, nz = tr_x.shape
         training_images = tr_x.reshape((nsamples, nx*ny*nz))
         training_labels = list(zip(*tr_y))[0]
+
+        nsamples, nx, ny, nz = vl_x.shape
+        validation_images = vl_x.reshape((nsamples, nx*ny*nz))
+        validation_labels = list(zip(*vl_y))[0]
 
 
         nsamples, nx, ny, nz = te_x.shape
         self.testing_images = te_x.reshape((nsamples, nx*ny*nz))
         self.testing_labels = list(zip(*te_y))[0]
 
-        print(f'{len(tr_x) + len(te_x)}')
-
-        return training_images, training_labels
+        return training_images, training_labels, validation_images, validation_labels
 
     def __train_model(self):
-        training_images, training_labels = self.__split_data()
+        if self.model is not None:
+            return None, None
+
+        training_images, training_labels, validation_images, validation_labels = self.__split_data()
 
         self.model = SVC()
         self.model.fit(training_images, training_labels)
 
-    def predict(self):
+        return validation_images, validation_labels
+
+    def validate(self):
         '''
-        Predict Methord to Be Called that starts predicting
+        Validate Method to be Called that tests out the
+        validation data
         '''
-        self.__train_model()
-        pred = self.model.predict(self.testing_images)
+        validation_images, validation_labels = self.__train_model()
+
+        pred = self.model.predict(validation_images)
 
         print(
-            f'Accuracy of Model is {accuracy_score(self.testing_labels, pred)}'
+            f'Accuracy of Model on Validation Set {accuracy_score(validation_labels, pred)}'
         )
 
-        return pred
+
+    def predict(self, extra=False):
+        '''
+        Predict Method to Be called that starts predicting
+        on the test data
+        '''
+        self.__train_model()
+
+        if not extra:
+            pred = self.model.predict(self.testing_images)
+
+            print(
+                f'Accuracy of Model on Testing Set {accuracy_score(self.testing_labels, pred)}'
+            )
+
+            return pred
+
+        # Handle Code Here For Extra Dataset
+        return None
 
     @staticmethod
     def __get_labels(label_file):
@@ -176,4 +208,5 @@ class Model:
 
 if __name__ == '__main__':
     model = Model('..', 'cartoon_set')
+    model.validate()
     model.predict()

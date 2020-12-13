@@ -209,7 +209,7 @@ class Model:
         pred = self.model.predict(validation_images)
 
         print(
-            f'Accuracy of Model is {accuracy_score(validation_labels, pred)}'
+            f'Accuracy of Model on validation set is {accuracy_score(validation_labels, pred)}'
         )
 
 

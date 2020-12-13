@@ -139,12 +139,16 @@ class Model:
         self.testing_images = None
         self.testing_labels = None
 
-    def extract_features(self):
+    def extract_features(self, extra=False):
         '''
         Extract Features and Labels From Images
         '''
-        print('Extracting Features')
-        images, total = self.__get_images()
+        if extra:
+            print('Extracting Features From Extra Dataset')
+        else:
+            print('Extracting Features From Original Dataset')
+
+        images, total = self.__get_images(extra)
 
         with Pool() as extractor:
             images = list(
@@ -153,6 +157,7 @@ class Model:
 
         images = filter(lambda image: not isinstance(image[0], type(None)),
                         images)
+
         __labels = self.__get_labels(self.label_file)
 
         features, labels = zip(*images)
@@ -208,15 +213,33 @@ class Model:
         )
 
 
-    def predict(self):
+    def predict(self, extra=False):
         '''
-        Predict Method to Be Called that starts predicting
+        Predict Method to Be called that starts predicting
+        on the test data
         '''
         self.__train_model()
-        pred = self.model.predict(self.testing_images)
+
+        if not extra:
+            pred = self.model.predict(self.testing_images)
+
+            print(
+                f'Accuracy of Model on Testing Set {accuracy_score(self.testing_labels, pred)}'
+            )
+
+            return pred
+
+        data_x, data_y = self.extract_features(extra)
+        data_y = np.array([data_y, -(data_y - 1)]).T
+
+        nsamples, nx, ny = data_x.shape
+        extra_images = data_x.reshape((nsamples, nx*ny))
+        extra_labels = list(zip(*data_y))[0]
+
+        pred = self.model.predict(extra_images)
 
         print(
-            f'Accuracy of Model is {accuracy_score(self.testing_labels, pred)}'
+            f'Accuracy of Model on Extra Testing Set {accuracy_score(extra_labels, pred)}'
         )
 
         return pred
@@ -235,9 +258,12 @@ class Model:
 
 
 
-    def __get_images(self):
+    def __get_images(self, extra=False):
         __dir = path.join(self.__project_root, 'Datasets')
         __dir = path.join(__dir, self.__dataset)
+
+        if extra:
+            __dir = __dir + "_test"
 
         self.label_file = path.join(__dir, 'labels.csv')
         __dir = path.join(__dir, 'img')
@@ -251,3 +277,4 @@ if __name__ == '__main__':
     model = Model('..', 'celeba')
     model.validate()
     model.predict()
+    model.predict(extra=True)

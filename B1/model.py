@@ -1,9 +1,9 @@
 '''
-ML Model For Predicting the Gender from images.
+ML Model For Predicting the Face Shape from images.
 
-The Model utilies dlib and keras.preprocessing module
-to convert images to numpy arrays. Then Sklearn svm
-model is trained to predict images
+The Model utilies opencv to preprocess anr remove noise
+from images and convert images to numpy arrays. Then 
+Sklearn svm model is trained to predict images
 '''
 
 import sys

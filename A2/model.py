@@ -1,5 +1,5 @@
 '''
-ML Model For Predicting the Gender from images.
+ML Model For Predicting the Emotion from images.
 
 The Model utilies dlib and keras.preprocessing module
 to convert images to numpy arrays. Then Sklearn svm

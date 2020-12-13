@@ -57,12 +57,16 @@ class Model:
         self.testing_images = None
         self.testing_labels = None
 
-    def extract_features(self):
+    def extract_features(self, extra=False):
         '''
         Extract Features and Labels From Images
         '''
-        print('Extracting Features')
-        images, total = self.__get_images()
+        if extra:
+            print('Extracting Features From Extra Dataset')
+        else:
+            print('Extracting Features From Original Dataset')
+
+        images, total = self.__get_images(extra)
 
         with Pool() as extractor:
             images = list(
@@ -118,6 +122,8 @@ class Model:
 
         training_images, training_labels, validation_images, validation_labels = self.__split_data()
 
+        print("Training Model")
+
         self.model = SVC()
         self.model.fit(training_images, training_labels)
 
@@ -136,7 +142,6 @@ class Model:
             f'Accuracy of Model on Validation Set {accuracy_score(validation_labels, pred)}'
         )
 
-
     def predict(self, extra=False):
         '''
         Predict Method to Be called that starts predicting
@@ -153,8 +158,20 @@ class Model:
 
             return pred
 
-        # Handle Code Here For Extra Dataset
-        return None
+        data_x, data_y = self.extract_features(extra)
+        data_y = np.array([data_y, -(data_y - 1)]).T
+
+        nsamples, nx, ny = data_x.shape
+        extra_images = data_x.reshape((nsamples, nx*ny))
+        extra_labels = list(zip(*data_y))[0]
+
+        pred = self.model.predict(extra_images)
+
+        print(
+            f'Accuracy of Model on Extra Testing Set {accuracy_score(extra_labels, pred)}'
+        )
+
+        return pred
 
     @staticmethod
     def __get_labels(label_file):
@@ -170,9 +187,12 @@ class Model:
 
 
 
-    def __get_images(self):
+    def __get_images(self, extra=False):
         __dir = path.join(self.__project_root, 'Datasets')
         __dir = path.join(__dir, self.__dataset)
+
+        if extra:
+            __dir = __dir + "_test"
 
         self.label_file = path.join(__dir, 'labels.csv')
         __dir = path.join(__dir, 'img')
@@ -186,3 +206,4 @@ if __name__ == '__main__':
     model = Model('..', 'cartoon_set')
     model.validate()
     model.predict()
+    model.predict(extra=True)

@@ -18,6 +18,7 @@ try:
     from sklearn.metrics import accuracy_score
     from sklearn.model_selection import train_test_split
     from tqdm import tqdm
+    from termcolor import colored
 
 except ImportError:
     print('Required Modules Not Found')
@@ -162,7 +163,7 @@ class Model:
         pred = self.model.predict(validation_images)
 
         print(
-            f'Accuracy of Model on Validation Set {accuracy_score(validation_labels, pred)}'
+            f'Accuracy of Model on Validation Set {colored(accuracy_score(validation_labels, pred), "green")}'
         )
 
 
@@ -177,7 +178,7 @@ class Model:
             pred = self.model.predict(self.testing_images)
 
             print(
-                f'Accuracy of Model on Testing Set {accuracy_score(self.testing_labels, pred)}'
+                f'Accuracy of Model on Testing Set {colored(accuracy_score(self.testing_labels, pred), "green")}'
             )
 
             return pred
@@ -192,7 +193,7 @@ class Model:
         pred = self.model.predict(extra_images)
 
         print(
-            f'Accuracy of Model on Extra Testing Set {accuracy_score(extra_labels, pred)}'
+            f'Accuracy of Model on Extra Testing Set {colored(accuracy_score(extra_labels, pred), "green")}'
         )
 
         return pred

@@ -23,8 +23,9 @@ try:
     from termcolor import colored
 
 except ImportError:
-    print('Required Modules Not Found')
+    print('Dependencies not satisfied')
     sys.exit(1)
+
 
 def convert_to_feature(img_path):
     '''
@@ -38,14 +39,13 @@ def convert_to_feature(img_path):
     '''
     file_name = img_path.split('.')[-2].split('/')[-1]
 
-    _img = image.load_img(img_path,
-                          target_size=None,
-                          interpolation='bicubic')
+    _img = image.load_img(img_path, target_size=None, interpolation='bicubic')
     img = image.img_to_array(_img)
 
     feature, _ = run_dlib_shape(img)
 
     return feature, file_name
+
 
 def shape_to_np(shape, dtype="int"):
     '''
@@ -153,8 +153,7 @@ class Model:
 
         with Pool() as extractor:
             images = list(
-                tqdm(extractor.imap(convert_to_feature, images),
-                     total=total))
+                tqdm(extractor.imap(convert_to_feature, images), total=total))
 
         images = filter(lambda image: not isinstance(image[0], type(None)),
                         images)
@@ -176,9 +175,9 @@ class Model:
                                                   random_state=0)
 
         tr_x, vl_x, tr_y, vl_y = train_test_split(tr_x,
-                                          tr_y,
-                                          test_size=0.25,
-                                          random_state=0)
+                                                  tr_y,
+                                                  test_size=0.25,
+                                                  random_state=0)
 
         training_images = tr_x.reshape((len(tr_x), len(tr_x[0]) * 2))
         training_labels = list(zip(*tr_y))[0]
@@ -195,7 +194,8 @@ class Model:
         if self.model is not None:
             return None, None
 
-        training_images, training_labels, validation_images, validation_labels = self.__split_data()
+        training_images, training_labels, validation_images, validation_labels = self.__split_data(
+        )
 
         self.model = svm.SVC(kernel='poly', degree=3, C=1.0)
         self.model.fit(training_images, training_labels)
@@ -212,7 +212,6 @@ class Model:
         print(
             f'Accuracy of Model on Validation Set {colored(accuracy_score(validation_labels, pred), "green")}'
         )
-
 
     def predict(self, extra=False):
         '''
@@ -234,13 +233,13 @@ class Model:
         data_y = np.array([data_y, -(data_y - 1)]).T
 
         nsamples, nx, ny = data_x.shape
-        extra_images = data_x.reshape((nsamples, nx*ny))
+        extra_images = data_x.reshape((nsamples, nx * ny))
         extra_labels = list(zip(*data_y))[0]
 
         pred = self.model.predict(extra_images)
 
         print(
-                f'Accuracy of Model on Extra Testing Set {colored(accuracy_score(extra_labels, pred), "green")}'
+            f'Accuracy of Model on Extra Testing Set {colored(accuracy_score(extra_labels, pred), "green")}'
         )
 
         return pred
@@ -256,8 +255,6 @@ class Model:
         }
 
         return labels
-
-
 
     def __get_images(self, extra=False):
         __dir = path.join(self.__project_root, 'Datasets')

@@ -21,8 +21,9 @@ try:
     from termcolor import colored
 
 except ImportError:
-    print('Required Modules Not Found')
+    print('Dependencies not satisfied')
     sys.exit(1)
+
 
 def convert_to_feature(img_path):
     '''
@@ -41,6 +42,7 @@ def convert_to_feature(img_path):
     img = cv2.resize(img, (50, 50))
 
     return img, file_name
+
 
 class Model:
     '''
@@ -71,8 +73,7 @@ class Model:
 
         with Pool() as extractor:
             images = list(
-                tqdm(extractor.imap(convert_to_feature, images),
-                     total=total))
+                tqdm(extractor.imap(convert_to_feature, images), total=total))
 
         images = filter(lambda image: not isinstance(image[0], type(None)),
                         images)
@@ -103,16 +104,15 @@ class Model:
                                                   random_state=0)
 
         nsamples, nx, ny = tr_x.shape
-        training_images = tr_x.reshape((nsamples, nx*ny))
+        training_images = tr_x.reshape((nsamples, nx * ny))
         training_labels = list(zip(*tr_y))[0]
 
         nsamples, nx, ny = vl_x.shape
-        validation_images = vl_x.reshape((nsamples, nx*ny))
+        validation_images = vl_x.reshape((nsamples, nx * ny))
         validation_labels = list(zip(*vl_y))[0]
 
-
         nsamples, nx, ny = te_x.shape
-        self.testing_images = te_x.reshape((nsamples, nx*ny))
+        self.testing_images = te_x.reshape((nsamples, nx * ny))
         self.testing_labels = list(zip(*te_y))[0]
 
         return training_images, training_labels, validation_images, validation_labels
@@ -121,7 +121,8 @@ class Model:
         if self.model is not None:
             return None, None
 
-        training_images, training_labels, validation_images, validation_labels = self.__split_data()
+        training_images, training_labels, validation_images, validation_labels = self.__split_data(
+        )
 
         self.model = SVC()
         self.model.fit(training_images, training_labels)
@@ -161,7 +162,7 @@ class Model:
         data_y = np.array([data_y, -(data_y - 1)]).T
 
         nsamples, nx, ny = data_x.shape
-        extra_images = data_x.reshape((nsamples, nx*ny))
+        extra_images = data_x.reshape((nsamples, nx * ny))
         extra_labels = list(zip(*data_y))[0]
 
         pred = self.model.predict(extra_images)
@@ -183,8 +184,6 @@ class Model:
         }
 
         return labels
-
-
 
     def __get_images(self, extra=False):
         __dir = path.join(self.__project_root, 'Datasets')

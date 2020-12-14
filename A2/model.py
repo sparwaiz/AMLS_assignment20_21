@@ -23,7 +23,7 @@ try:
     from termcolor import colored
 
 except ImportError:
-    print('Required Modules Not Found')
+    print('Dependencies not satisfied')
     sys.exit(1)
 
 def convert_to_feature(img_path):

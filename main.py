@@ -1,5 +1,10 @@
 import sys
-from termcolor import cprint
+
+try:
+    from termcolor import cprint
+except ImportError:
+    print("Dependencies not Satisfied")
+    sys.exit(1)
 
 try:
     import A1.model
@@ -9,7 +14,6 @@ try:
 except ImportError:
     print("Ml Models Not Found")
     sys.exit(1)
-
 
 
 def run_mode(cls, dataset, root="."):
@@ -28,6 +32,7 @@ def main():
     run_mode(B1.model.Model, "cartoon_set")
     cprint("------------------- Model B2 ------------------", "cyan")
     run_mode(B2.model.Model, "cartoon_set")
+
 
 if __name__ == "__main__":
     main()

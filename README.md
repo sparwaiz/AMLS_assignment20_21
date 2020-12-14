@@ -11,7 +11,7 @@ The repo contains my solution for the AMLS module.
 
 - Install cmake and a c++ compiler:
 
-  - On Windows this can be done by install visual studio
+  - On Windows this can be done by installing visual studio
   - On macOS use homebrew or macports to install cmake, clang++ is preinstalled on macs
   - On Linux use your default package manager to install cmake, and gcc/g++
 

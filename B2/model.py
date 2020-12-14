@@ -21,8 +21,9 @@ try:
     from termcolor import colored
 
 except ImportError:
-    print('Required Modules Not Found')
+    print('Dependencies not satisfied')
     sys.exit(1)
+
 
 def convert_to_feature(img_path):
     '''
@@ -40,16 +41,14 @@ def convert_to_feature(img_path):
     gray_scaled = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray_scaled = cv2.medianBlur(gray_scaled, 5)
 
-    circles = cv2.HoughCircles(
-            gray_scaled,
-            cv2.HOUGH_GRADIENT,
-            0.5,
-            img.shape[0],
-            param1=450,
-            param2=13,
-            minRadius=11,
-            maxRadius=12
-            )
+    circles = cv2.HoughCircles(gray_scaled,
+                               cv2.HOUGH_GRADIENT,
+                               0.5,
+                               img.shape[0],
+                               param1=450,
+                               param2=13,
+                               minRadius=11,
+                               maxRadius=12)
 
     if circles is not None:
         eye_coords = circles[0][-1]
@@ -65,6 +64,7 @@ def convert_to_feature(img_path):
         return eye, file_name
 
     return None, file_name
+
 
 class Model:
     '''
@@ -95,8 +95,7 @@ class Model:
 
         with Pool() as extractor:
             images = list(
-                tqdm(extractor.imap(convert_to_feature, images),
-                     total=total))
+                tqdm(extractor.imap(convert_to_feature, images), total=total))
 
         images = filter(lambda image: not isinstance(image[0], type(None)),
                         images)
@@ -127,16 +126,15 @@ class Model:
                                                   random_state=0)
 
         nsamples, nx, ny, nz = tr_x.shape
-        training_images = tr_x.reshape((nsamples, nx*ny*nz))
+        training_images = tr_x.reshape((nsamples, nx * ny * nz))
         training_labels = list(zip(*tr_y))[0]
 
         nsamples, nx, ny, nz = vl_x.shape
-        validation_images = vl_x.reshape((nsamples, nx*ny*nz))
+        validation_images = vl_x.reshape((nsamples, nx * ny * nz))
         validation_labels = list(zip(*vl_y))[0]
 
-
         nsamples, nx, ny, nz = te_x.shape
-        self.testing_images = te_x.reshape((nsamples, nx*ny*nz))
+        self.testing_images = te_x.reshape((nsamples, nx * ny * nz))
         self.testing_labels = list(zip(*te_y))[0]
 
         return training_images, training_labels, validation_images, validation_labels
@@ -145,7 +143,8 @@ class Model:
         if self.model is not None:
             return None, None
 
-        training_images, training_labels, validation_images, validation_labels = self.__split_data()
+        training_images, training_labels, validation_images, validation_labels = self.__split_data(
+        )
 
         print("Training Model")
         self.model = SVC()
@@ -165,7 +164,6 @@ class Model:
         print(
             f'Accuracy of Model on Validation Set {colored(accuracy_score(validation_labels, pred), "green")}'
         )
-
 
     def predict(self, extra=False):
         '''
@@ -187,7 +185,7 @@ class Model:
         data_y = np.array([data_y, -(data_y - 1)]).T
 
         nsamples, nx, ny, nz = data_x.shape
-        extra_images = data_x.reshape((nsamples, nx*ny*nz))
+        extra_images = data_x.reshape((nsamples, nx * ny * nz))
         extra_labels = list(zip(*data_y))[0]
 
         pred = self.model.predict(extra_images)
@@ -209,8 +207,6 @@ class Model:
         }
 
         return labels
-
-
 
     def __get_images(self, extra=False):
         __dir = path.join(self.__project_root, 'Datasets')

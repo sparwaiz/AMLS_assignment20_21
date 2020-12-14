@@ -12,13 +12,13 @@ from os import listdir, path
 
 try:
 
-    import numpy as np
     import cv2
-    from sklearn.svm import SVC
+    import numpy as np
     from sklearn.metrics import accuracy_score
     from sklearn.model_selection import train_test_split
-    from tqdm import tqdm
+    from sklearn.svm import SVC
     from termcolor import colored
+    from tqdm import tqdm
 
 except ImportError:
     print('Dependencies not satisfied')

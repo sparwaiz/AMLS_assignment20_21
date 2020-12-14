@@ -19,8 +19,8 @@ try:
     from sklearn import svm
     from sklearn.metrics import accuracy_score
     from sklearn.model_selection import train_test_split
-    from tqdm import tqdm
     from termcolor import colored
+    from tqdm import tqdm
 
 except ImportError:
     print('Dependencies not satisfied')

@@ -168,6 +168,13 @@ class Model:
         return np.array(features), (np.fromiter(labels, dtype=np.int) + 1) / 2
 
     def __split_data(self):
+        '''
+        private method to split the data into 3
+        parts:
+            - training (for training the model)
+            - validation (To validate the model i.e. avoid overfitting)
+            - testing to test the model
+        '''
         data_x, data_y = self.extract_features()
         data_y = np.array([data_y, -(data_y - 1)]).T
         tr_x, te_x, tr_y, te_y = train_test_split(data_x,

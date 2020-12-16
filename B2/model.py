@@ -112,6 +112,13 @@ class Model:
         return features, labels
 
     def __split_data(self):
+        '''
+        private method to split the data into 3
+        parts:
+            - training (for training the model)
+            - validation (To validate the model i.e. avoid overfitting)
+            - testing to test the model
+        '''
         data_x, data_y = self.extract_features()
         data_y = np.array([data_y, -(data_y - 1)]).T
 
@@ -140,6 +147,10 @@ class Model:
         return training_images, training_labels, validation_images, validation_labels
 
     def __train_model(self):
+        '''
+        private method to train the ML model
+        on processed dataset
+        '''
         if self.model is not None:
             return None, None
 
@@ -198,6 +209,13 @@ class Model:
 
     @staticmethod
     def __get_labels(label_file):
+        '''
+        label_file: csv file for the dataset
+
+        private class function to read the csv
+        file and return labels for training the
+        model
+        '''
         with open(label_file, 'r') as labels_file:
             lines = labels_file.readlines()
 
@@ -209,6 +227,12 @@ class Model:
         return labels
 
     def __get_images(self, extra=False):
+        '''
+        extra (boolean): use the extra dataset
+
+        private class function to create path to dataset
+        and return list og images in the directory
+        '''
         __dir = path.join(self.__project_root, 'Datasets')
         __dir = path.join(__dir, self.__dataset)
 

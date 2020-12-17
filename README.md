@@ -3,7 +3,24 @@
 The repo contains my solution for the AMLS module.
 
 
+## Warnings
 
+- Code only tested with python 3.6.12. However, therotically it should work
+with any python version greater than 3.6
+- Code only tested on macOS but it's written in a cross platform manner. So,
+it should work on any platform available
+- Code Utilises Python Multiprocessing for computing intensive tasks. Make
+sure you have permission to fork processes on the machine you are testing
+
+
+## Libraries Used
+
+- Keras and Kera.preprocessing
+- OpenCV
+- scikit-learn
+- Pillow
+- Dlib
+- Tensorflow
 
 ## Prerequisites
 

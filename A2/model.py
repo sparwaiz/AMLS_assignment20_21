@@ -151,7 +151,7 @@ class Model:
 
         images, total = self.__get_images(extra)
 
-        with Pool() as extractor:
+        with Pool(4) as extractor:
             images = list(
                 tqdm(extractor.imap(convert_to_feature, images),
                      total=total))

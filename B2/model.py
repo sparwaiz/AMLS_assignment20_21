@@ -45,8 +45,8 @@ def convert_to_feature(img_path):
                                cv2.HOUGH_GRADIENT,
                                0.5,
                                img.shape[0],
-                               param1=450,
-                               param2=13,
+                               param1=440,
+                               param2=14,
                                minRadius=11,
                                maxRadius=12)
 
@@ -93,7 +93,7 @@ class Model:
 
         images, total = self.__get_images(extra)
 
-        with Pool() as extractor:
+        with Pool(4) as extractor:
             images = list(
                 tqdm(extractor.imap(convert_to_feature, images), total=total))
 
@@ -157,7 +157,6 @@ class Model:
         training_images, training_labels, validation_images, validation_labels = self.__split_data(
         )
 
-        print("Training Model")
         self.model = SVC()
         self.model.fit(training_images, training_labels)
 

@@ -16,6 +16,7 @@ try:
     import numpy as np
     from sklearn.metrics import accuracy_score
     from sklearn.model_selection import train_test_split
+    from sklearn.metrics import confusion_matrix
     from sklearn.svm import SVC
     from termcolor import colored
     from tqdm import tqdm
@@ -178,9 +179,10 @@ class Model:
 
         pred = self.model.predict(extra_images)
 
-        print(
-            f'Accuracy of Model on Extra Testing Set {colored(accuracy_score(extra_labels, pred), "green")}'
-        )
+        # print(
+        #     f'Accuracy of Model on Extra Testing Set {colored(accuracy_score(extra_labels, pred), "green")}'
+        # )
+        print(confusion_matrix(extra_labels, pred))
 
         return pred
 
@@ -227,5 +229,5 @@ class Model:
 if __name__ == '__main__':
     model = Model('..', 'cartoon_set')
     model.validate()
-    model.predict()
+    # model.predict()
     model.predict(extra=True)

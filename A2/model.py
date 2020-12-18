@@ -18,6 +18,7 @@ try:
     from keras.preprocessing import image
     from sklearn import svm
     from sklearn.metrics import accuracy_score
+    from sklearn.metrics import confusion_matrix
     from sklearn.model_selection import train_test_split
     from termcolor import colored
     from tqdm import tqdm
@@ -250,9 +251,11 @@ class Model:
 
         pred = self.model.predict(extra_images)
 
-        print(
-            f'Accuracy of Model on Extra Testing Set {colored(accuracy_score(extra_labels, pred), "green")}'
-        )
+        # print(
+        #     f'Accuracy of Model on Extra Testing Set {colored(accuracy_score(extra_labels, pred), "green")}'
+        # )
+
+        print(confusion_matrix(extra_labels, pred))
 
         return pred
 

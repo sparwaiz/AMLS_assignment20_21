@@ -11,6 +11,7 @@ with any python version greater than 3.6
 it should work on any platform available
 - Code Utilises Python Multiprocessing for computing intensive tasks. Make
 sure you have permission to fork processes on the machine you are testing
+- Directories A1 and A2 contain the dlib 68 landmarks dat file. In, case it's missing when you clone the repo please download and put dat file in both these directories.
 
 
 ## Libraries Used
